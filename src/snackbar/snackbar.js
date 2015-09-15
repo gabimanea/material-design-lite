@@ -16,13 +16,29 @@
 (function() {
   'use strict';
 
+  /**
+   * Class constructor for Snackbar MDL component.
+   * Implements MDL component design pattern defined at:
+   * https://github.com/jasonmayes/mdl-component-design-pattern
+   *
+   * @constructor
+   * @param {HTMLElement} element The element that will be upgraded.
+   */
   var MaterialSnackbar = function MaterialSnackbar(element) {
     this.element_ = element;
     this.active = false;
     this.init();
   };
-  window.MaterialSnackbar = MaterialSnackbar;
+  window['MaterialSnackbar'] = MaterialSnackbar;
 
+  /**
+   * Store strings for class names defined by this component that are used in
+   * JavaScript. This allows us to simply change it in one place should we
+   * decide to modify at a later date.
+   *
+   * @enum {string}
+   * @private
+   */
   MaterialSnackbar.prototype.cssClasses_ = {
     snackbar: 'mdl-snackbar',
     message: 'mdl-snackbar__text',
@@ -30,6 +46,11 @@
     activeSnackbar: 'is-active'
   };
 
+  /**
+   * Create the internal snackbar markup.
+   *
+   * @private
+   */
   MaterialSnackbar.prototype.createSnackbar_ = function() {
     this.snackbarElement_ = document.createElement('div');
     this.textElement_ = document.createElement('div');
@@ -55,6 +76,11 @@
 
   };
 
+  /**
+   * Remove the internal snackbar markup.
+   *
+   * @private
+   */
   MaterialSnackbar.prototype.removeSnackbar_ = function() {
     if (this.actionElement_ && this.actionElement_.parentNode) {
       this.actionElement_.parentNode.removeChild(this.actionElement_);
@@ -63,6 +89,12 @@
     this.snackbarElement_.parentNode.removeChild(this.snackbarElement_);
   };
 
+  /**
+   * Create the internal snackbar markup.
+   *
+   * @param {Object} data The data for the notification.
+   * @public
+   */
   MaterialSnackbar.prototype.showSnackbar = function(data) {
     if (data === undefined) {
       throw new Error(
@@ -93,13 +125,25 @@
       this.createSnackbar_();
     }
   };
+  MaterialSnackbar.prototype['showSnackbar'] = MaterialSnackbar.prototype.showSnackbar;
 
+  /**
+   * Check if the queue has items within it.
+   * If it does, display the next entry.
+   *
+   * @private
+   */
   MaterialSnackbar.prototype.checkQueue_ = function() {
     if (this.queuedNotifications_.length > 0) {
       this.showSnackbar(this.queuedNotifications_.shift());
     }
   };
 
+  /**
+   * Cleanup the snackbar event listeners and accessiblity attributes.
+   *
+   * @private
+   */
   MaterialSnackbar.prototype.cleanup_ = function() {
     this.snackbarElement_.classList.remove(this.cssClasses_.activeSnackbar);
     this.snackbarElement_.setAttribute('aria-hidden', true);
@@ -112,17 +156,30 @@
     this.checkQueue_();
   };
 
+  /**
+   * Clean properties to avoid one entry affecting another.
+   *
+   * @private
+   */
   MaterialSnackbar.prototype.setDefaults_ = function() {
     this.actionHandler_ = undefined;
     this.message_ = undefined;
     this.actionText_ = undefined;
   };
 
+  /**
+   * Initialize the object.
+   *
+   * @public
+   */
   MaterialSnackbar.prototype.init = function() {
     this.setDefaults_();
     this.queuedNotifications_ = [];
   };
+  MaterialSnackbar.prototype['init'] = MaterialSnackbar.prototype.init;
 
+  // The component registers itself. It can assume componentHandler is available
+  // in the global scope.
   componentHandler.register({
     constructor: MaterialSnackbar,
     classAsString: 'MaterialSnackbar',
